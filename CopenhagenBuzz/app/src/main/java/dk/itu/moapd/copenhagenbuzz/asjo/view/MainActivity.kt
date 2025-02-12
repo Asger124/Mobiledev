@@ -1,5 +1,4 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
-
 import android.app.DatePickerDialog
 import android.icu.util.Calendar
 import android.os.Bundle
@@ -62,24 +61,11 @@ class MainActivity : AppCompatActivity() {
                    {
 
                   // Update the object attributes.
-                  event.setEventName(
-                      eventName.text.toString().trim()
-                  )
-                  event.setEventLocation(
-                      eventLocation.text.toString().trim()
-                  )
-
-                  event.setEventDate(
-                      eventDate.text.toString().trim()
-                  )
-
-                  event.setEventType(
-                      eventType.text.toString().trim()
-                  )
-
-                  event.setEventDescription(
-                      eventDescription.text.toString().trim()
-                  )
+                      event.eventName = eventName.text.toString().trim()
+                      event.eventLocation = eventLocation.text.toString().trim()
+                      event.eventDate = eventDate.text.toString().trim()
+                      event.eventType = eventType.text.toString().trim()
+                      event.eventDescription = eventDescription.text.toString().trim()
 
 
                   // Write in the `Logcat ` system.
