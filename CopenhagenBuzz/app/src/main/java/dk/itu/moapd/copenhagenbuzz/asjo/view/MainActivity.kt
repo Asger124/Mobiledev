@@ -1,4 +1,4 @@
-package dk.itu.moapd.copenhagenbuzz.asjo
+package dk.itu.moapd.copenhagenbuzz.asjo.view
 
 import android.app.DatePickerDialog
 import android.icu.util.Calendar
@@ -8,10 +8,10 @@ import android.widget.EditText
 import androidx.core.view.WindowCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.textfield.TextInputEditText
+import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
+import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.ActivityMainBinding
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {

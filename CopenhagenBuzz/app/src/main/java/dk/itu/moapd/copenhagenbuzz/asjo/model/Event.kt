@@ -1,6 +1,4 @@
-package dk.itu.moapd.copenhagenbuzz.asjo
-
-import java.util.Date
+package dk.itu.moapd.copenhagenbuzz.asjo.model
 
 class Event {
 
