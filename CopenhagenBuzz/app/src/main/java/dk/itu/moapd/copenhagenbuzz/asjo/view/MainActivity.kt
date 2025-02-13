@@ -1,6 +1,6 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.health.connect.datatypes.units.Length
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.ActivityMainBinding
+import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -30,15 +33,21 @@ class MainActivity : AppCompatActivity() {
     private lateinit var eventDescription: EditText
 
 
-    private val event: Event = Event("", "","", "", "")
+    private val event: Event = Event("",
+                                    "",
+                                    Pair(LocalDate.now(),LocalDate.now()),
+                                    "",
+                                    "")
+
+    private var selectedStartDate: LocalDate? = null
+    private var selectedEndDate: LocalDate? = null
+    private val dateFormatter:DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
      override fun onCreate(savedInstanceState: Bundle?) {
          WindowCompat.setDecorFitsSystemWindows(window , false)
          super.onCreate(savedInstanceState)
          binding = ActivityMainBinding.inflate(layoutInflater)
          setContentView(binding.root)
-
-
 
          eventName = binding.contentMain.editTextEventName
          eventLocation = binding.contentMain.editTextEventLocation
@@ -62,15 +71,14 @@ class MainActivity : AppCompatActivity() {
               eventDescription.text.toString().isNotEmpty())
                    {
 
-                  // Update the object attributes.
+                  // Create event object attributes.d
                       event.eventName = eventName.text.toString().trim()
                       event.eventLocation = eventLocation.text.toString().trim()
-                      event.eventDate = eventDate.text.toString().trim()
+                      event.eventDateRange = Pair(selectedStartDate!!,selectedEndDate!!)
                       event.eventType = eventType.text.toString().trim()
                       event.eventDescription = eventDescription.text.toString().trim()
 
-
-                  // Write in the `Logcat ` system.
+                  // Show Snackbar(information about event when added)
                   showMessage()
               }
          }
@@ -81,27 +89,22 @@ class MainActivity : AppCompatActivity() {
 
 
         DatePickerDialog(this, { _, startYear, startMonth, startDay ->
-            calendar.set(startYear, startMonth, startDay)
-            val startDate = calendar.time
+            selectedStartDate = LocalDate.of(startYear, startMonth + 1, startDay)
 
 
             DatePickerDialog(this, { _, endYear, endMonth, endDay ->
-                calendar.set(endYear, endMonth, endDay)
-                val endDate = calendar.time
+                selectedEndDate = LocalDate.of(endYear, endMonth + 1, endDay)
 
-
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                editText.setText("${dateFormat.format(startDate)} - ${dateFormat.format(endDate)}")
+                editText.setText("${dateFormatter.format(selectedStartDate)}, - ${dateFormatter.format(selectedEndDate)}")
             }, startYear, startMonth, startDay).show() // Default date: Start Date
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
 
 
     private fun showMessage() {
-        var msg = ("Event added using\n" + event.toString())
+        val msg = ("Event added using\n$event")
         Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
-
-
+        Log.d(TAG,event.toString())
 
      }
 
