@@ -8,7 +8,6 @@ import androidx.core.view.WindowCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
-import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.ActivityMainBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -37,12 +36,14 @@ class MainActivity : AppCompatActivity() {
          binding = ActivityMainBinding.inflate(layoutInflater)
          setContentView(binding.root)
 
-         eventName = findViewById(R.id.edit_text_event_name)
-         eventLocation = findViewById(R.id.edit_text_event_location)
-         addEventButton = findViewById(R.id.fab_add_event)
-         eventDate = findViewById(R.id.edit_text_event_date)
-         eventType = findViewById(R.id.edit_text_event_type)
-         eventDescription = findViewById(R.id.edit_text_event_description)
+
+
+         eventName = binding.contentMain.editTextEventName
+         eventLocation = binding.contentMain.editTextEventLocation
+         addEventButton = binding.contentMain.fabAddEvent
+         eventDate = binding.contentMain.editTextEventDate
+         eventType = binding.contentMain.editTextEventType
+         eventDescription = binding.contentMain.editTextEventDescription
 
          eventDate.setOnClickListener {
              pickDateRange(eventDate)
