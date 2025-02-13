@@ -1,5 +1,6 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
 import android.app.DatePickerDialog
+import android.health.connect.datatypes.units.Length
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import android.widget.EditText
 import androidx.core.view.WindowCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.ActivityMainBinding
 import java.text.SimpleDateFormat
@@ -44,7 +46,6 @@ class MainActivity : AppCompatActivity() {
          eventDate = binding.contentMain.editTextEventDate
          eventType = binding.contentMain.editTextEventType
          eventDescription = binding.contentMain.editTextEventDescription
-
          eventDate.setOnClickListener {
              pickDateRange(eventDate)
          }
@@ -97,7 +98,11 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun showMessage() {
-        Log.d(TAG, event.toString())
+        var msg = ("Event added using\n" + event.toString())
+        Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
+
+
+
      }
 
 
