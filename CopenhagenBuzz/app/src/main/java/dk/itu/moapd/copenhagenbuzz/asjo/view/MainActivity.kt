@@ -18,7 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.ActivityMainBinding
-import dk.itu.moapd.copenhagenbuzz.asjo.viewmodel.MainViewModel
+//import dk.itu.moapd.copenhagenbuzz.asjo.viewmodel.MainViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -26,9 +26,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this)[MainViewModel::class.java]
-    }
+//    private val viewModel: MainViewModel by lazy {
+//        ViewModelProvider(this)[MainViewModel::class.java]
+//    }
 
     companion object {
          private val TAG = MainActivity::class.qualifiedName
@@ -48,19 +48,6 @@ class MainActivity : AppCompatActivity() {
     private var selectedStartDate: LocalDate? = null
     private var selectedEndDate: LocalDate? = null
     private val dateFormatter:DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    private val myMenu:Menu? = null
-
-    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val intent = result.data
-            val isLoggedIn = intent?.getBooleanExtra("IsLoggedIn", false)
-            // TODO: Handle RESULT_OK
-            Log.d("start", "calledStartResult: $isLoggedIn")
-//            if(isLoggedIn == true) {
-//                myMenu?.findItem(R.id.login)?.setVisible(false)
-//            } else {
-//                myMenu?.findItem(R.id.logout)?.setVisible(false)
-//            }
-    }
 
      override fun onCreate(savedInstanceState: Bundle?) {
          WindowCompat.setDecorFitsSystemWindows(window , false)
@@ -70,9 +57,6 @@ class MainActivity : AppCompatActivity() {
 
              setSupportActionBar(topAppBar)
          }
-         val isLoggedIn  = intent.getBooleanExtra("IsLoggedIn", false)
-
-         Log.d("MenuDebug", "MainActivity started with IsLoggedIn = $isLoggedIn")
 
          setContentView(binding.root)
          invalidateOptionsMenu()
@@ -120,24 +104,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-
         Log.d("MenuDebug", "onPrepareOptionsMenu called")
 
-        val isLoggedIn = intent.getBooleanExtra("IsLoggedIn", false)
-        Log.d("MenuDebug", "IsLoggedIn: $isLoggedIn")
+        val isLoggedIn = intent.getBooleanExtra("isLoggedIn", false)
+        Log.d("MenuDebug", "isLoggedIn: $isLoggedIn")
 
+        //Set up menuItem(Login and logout) components.
+        //Based in the value of isLoggedIn, set which component should be visible
         menu.findItem(R.id.login).isVisible =
-        intent.getBooleanExtra("IsLoggedIn", false)
+        intent.getBooleanExtra("isLoggedIn", false)
+
+        //If user is logged out
         menu.findItem(R.id.logout).isVisible =
-        !intent.getBooleanExtra("IsLoggedIn", false)
+        !intent.getBooleanExtra("isLoggedIn", false)
         return true
     }
+
+    //Controls what actions are performed when a User clicks on the menu items
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.login, R.id.logout -> {
+                // Start LoginActivity when Login and Logout components are clicked.
                 val intent = Intent(baseContext, LoginActivity::class.java)
-                Log.d("moredebug","intentfor optionsselected : $intent")
-                startForResult.launch(intent)
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -20,7 +20,7 @@ class LoginActivity : AppCompatActivity() {
 
         binding.loginButton.setOnClickListener{
             val intent = Intent(this,MainActivity::class.java).apply {
-                putExtra("IsLoggedIn",true)
+                putExtra("isLoggedIn",true)
             }
             Log.d("MenuDebug", "Login Button Clicked - Sending IsLoggedIn = true")
             startActivity(intent)
@@ -29,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
 
         binding.guestButton.setOnClickListener{
             val intent = Intent(this,MainActivity::class.java).apply {
-                putExtra("IsLoggedIn", false)
+                putExtra("isLoggedIn", false)
             }
             Log.d("MenuDebug", "Guest Button Clicked - Sending IsLoggedIn = false")
             startActivity(intent)
