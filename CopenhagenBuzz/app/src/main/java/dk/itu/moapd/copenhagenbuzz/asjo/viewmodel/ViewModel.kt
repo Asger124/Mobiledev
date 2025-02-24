@@ -5,21 +5,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MainViewModel: ViewModel() {
-    private var _text = MutableLiveData<String>()
+    private var _isLoggedIn = MutableLiveData<Boolean>()
 
-    val textState: LiveData<String>
-        get() = _text
+    val isLoggedin: LiveData<Boolean>
+        get() = _isLoggedIn
 
-    fun onTextChanged(text:String) {
-        _text.value = text
-    }
 
-    private var isLoggedIn = false
-
+    private var IsLoggedIn = false
     fun toggleLogin() {
-        isLoggedIn = !isLoggedIn
+        IsLoggedIn = !IsLoggedIn
     }
 
-    fun isLogged() = isLoggedIn
+    fun IsLogged() = IsLoggedIn
 
 }

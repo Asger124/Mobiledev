@@ -1,23 +1,26 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
-import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.WindowCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
+import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.ActivityMainBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.viewmodel.MainViewModel
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,23 +40,43 @@ class MainActivity : AppCompatActivity() {
     private lateinit var eventType : EditText
     private lateinit var eventDate: EditText
     private lateinit var eventDescription: EditText
-
-
     private val event: Event = Event("",
                                     "",
                                     Pair(LocalDate.now(),LocalDate.now()),
                                     "",
                                     "")
-
     private var selectedStartDate: LocalDate? = null
     private var selectedEndDate: LocalDate? = null
     private val dateFormatter:DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val myMenu:Menu? = null
+
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val intent = result.data
+            val isLoggedIn = intent?.getBooleanExtra("IsLoggedIn", false)
+            // TODO: Handle RESULT_OK
+            Log.d("start", "calledStartResult: $isLoggedIn")
+//            if(isLoggedIn == true) {
+//                myMenu?.findItem(R.id.login)?.setVisible(false)
+//            } else {
+//                myMenu?.findItem(R.id.logout)?.setVisible(false)
+//            }
+    }
 
      override fun onCreate(savedInstanceState: Bundle?) {
          WindowCompat.setDecorFitsSystemWindows(window , false)
          super.onCreate(savedInstanceState)
          binding = ActivityMainBinding.inflate(layoutInflater)
+         with(binding) {
+
+             setSupportActionBar(topAppBar)
+         }
+         val isLoggedIn  = intent.getBooleanExtra("IsLoggedIn", false)
+
+         Log.d("MenuDebug", "MainActivity started with IsLoggedIn = $isLoggedIn")
+
          setContentView(binding.root)
+         invalidateOptionsMenu()
+         setupMenuListener()
 
          eventName = binding.contentMain.editTextEventName
          eventLocation = binding.contentMain.editTextEventLocation
@@ -64,8 +87,6 @@ class MainActivity : AppCompatActivity() {
          eventDate.setOnClickListener {
              pickDateRange(eventDate)
          }
-
-
          addEventButton.setOnClickListener {
 
               // Only execute the following code when the user fills all
@@ -90,6 +111,47 @@ class MainActivity : AppCompatActivity() {
          }
      }
 
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        Log.d("create", "Create called")
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.top_app_bar, menu)
+        return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+
+        Log.d("MenuDebug", "onPrepareOptionsMenu called")
+
+        val isLoggedIn = intent.getBooleanExtra("IsLoggedIn", false)
+        Log.d("MenuDebug", "IsLoggedIn: $isLoggedIn")
+
+        menu.findItem(R.id.login).isVisible =
+        intent.getBooleanExtra("IsLoggedIn", false)
+        menu.findItem(R.id.logout).isVisible =
+        !intent.getBooleanExtra("IsLoggedIn", false)
+        return true
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.login, R.id.logout -> {
+                val intent = Intent(baseContext, LoginActivity::class.java)
+                Log.d("moredebug","intentfor optionsselected : $intent")
+                startForResult.launch(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun setupMenuListener() {
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            onOptionsItemSelected(menuItem)
+        }
+
+    }
+
+
     private fun pickDateRange(editText: EditText) {
         val calendar = Calendar.getInstance()
 
@@ -112,7 +174,7 @@ class MainActivity : AppCompatActivity() {
         Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
         Log.d(TAG,event.toString())
 
-     }
-
+    }
 
 }
+

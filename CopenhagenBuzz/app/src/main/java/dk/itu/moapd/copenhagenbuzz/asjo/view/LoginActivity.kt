@@ -1,7 +1,9 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,10 +18,24 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         binding.loginButton.setOnClickListener{
-            val intent = Intent(this,MainActivity::class.java)
+            val intent = Intent(this,MainActivity::class.java).apply {
+                putExtra("IsLoggedIn",true)
+            }
+            Log.d("MenuDebug", "Login Button Clicked - Sending IsLoggedIn = true")
             startActivity(intent)
+            finish()
         }
+
+        binding.guestButton.setOnClickListener{
+            val intent = Intent(this,MainActivity::class.java).apply {
+                putExtra("IsLoggedIn", false)
+            }
+            Log.d("MenuDebug", "Guest Button Clicked - Sending IsLoggedIn = false")
+            startActivity(intent)
+            finish()
+        }
+
+
     }
 }
