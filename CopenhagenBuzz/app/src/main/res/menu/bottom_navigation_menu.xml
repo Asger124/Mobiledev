@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+        <item
+            android:id="@+id/fragment_articles"
+            android:enabled="true"
+            android:icon="@drawable/outline_bookmark_add_24"
+            app:iconTint="?attr/colorControlNormal"
+            android:title="timeline"
+            android:layout_alignParentBottom="true"
+            app:showAsAction="ifRoom"/>
+</menu>

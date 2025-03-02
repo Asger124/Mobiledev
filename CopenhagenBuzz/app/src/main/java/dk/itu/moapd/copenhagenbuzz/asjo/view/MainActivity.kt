@@ -14,6 +14,12 @@ import androidx.core.view.WindowCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
@@ -25,31 +31,32 @@ import java.time.format.DateTimeFormatter
 class MainActivity : AppCompatActivity() {
 
     //Variables used by class
+    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private lateinit var eventName: EditText
-    private lateinit var eventLocation: EditText
-    private lateinit var addEventButton: FloatingActionButton
-    private lateinit var eventType: EditText
-    private lateinit var eventDate: EditText
-    private lateinit var eventDescription: EditText
-    private val event: Event = Event("", "", Pair(LocalDate.now(), LocalDate.now()), "", "")
-    private var selectedStartDate: LocalDate? = null
-    private var selectedEndDate: LocalDate? = null
-    private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(
+                R.id.fragment_container_view
+            ) as NavHostFragment
+        val navController = navHostFragment.navController
 
         with(binding) {
-            setSupportActionBar(topAppBar)
+            setSupportActionBar(binding.topAppBar)
         }
-        setContentView(binding.root)
+
+        binding.bottomNavigation.setupWithNavController(navController)
+        //binding.bottomNavigationRail.setupWithNavController(navController)
+
 
         invalidateOptionsMenu()
         setupMenuListener()
-        setUpEventAttr()
 
     }
 
@@ -91,79 +98,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    private fun setUpEventAttr() {
-
-        eventName = binding.contentMain.editTextEventName
-        eventLocation = binding.contentMain.editTextEventLocation
-        addEventButton = binding.contentMain.fabAddEvent
-        eventDate = binding.contentMain.editTextEventDate
-        eventType = binding.contentMain.editTextEventType
-        eventDescription = binding.contentMain.editTextEventDescription
-
-        eventDate.setOnClickListener {
-            pickDateRange(eventDate)
+        override fun onSupportNavigateUp(): Boolean {
+            val navController = findNavController(R.id.fragment_container_view)
+            return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
         }
 
-        addEventButton.setOnClickListener {
 
-            // Only execute the following code when the user fills all
-            // `EditText `.
-            if (eventName.text.toString().isNotEmpty() &&
-                eventLocation.text.toString().isNotEmpty() &&
-                eventType.text.toString().isNotEmpty() &&
-                eventDate.text.toString().isNotEmpty() &&
-                eventDescription.text.toString().isNotEmpty()
-            )
-            {
-
-                // Create event object attributes.d
-                event.eventName = eventName.text.toString().trim()
-                event.eventLocation = eventLocation.text.toString().trim()
-                event.eventDateRange = Pair(selectedStartDate!!, selectedEndDate!!)
-                event.eventType = eventType.text.toString().trim()
-                event.eventDescription = eventDescription.text.toString().trim()
-
-                // Show Snackbar(information about event when added)
-                showMessage()
-            }
-
-        }
-
-    }
 
         private fun setupMenuListener() {
             binding.topAppBar.setOnMenuItemClickListener { menuItem ->
                 onOptionsItemSelected(menuItem)
             }
-
-        }
-
-
-        private fun pickDateRange(editText: EditText) {
-            val calendar = Calendar.getInstance()
-
-            DatePickerDialog(
-                this,
-                { _, startYear, startMonth, startDay ->
-                    selectedStartDate = LocalDate.of(startYear, startMonth + 1, startDay)
-
-                    DatePickerDialog(this, { _, endYear, endMonth, endDay ->
-                        selectedEndDate = LocalDate.of(endYear, endMonth + 1, endDay)
-
-                        editText.setText("${dateFormatter.format(selectedStartDate)}, - ${dateFormatter.format(selectedEndDate)}"
-                        )
-                    }, startYear, startMonth, startDay).show() // Default date: Start Date
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
-        }
-
-        private fun showMessage() {
-            val msg = ("Event added using\n$event")
-            Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
-            Log.d("Event:", event.toString())
 
         }
 
