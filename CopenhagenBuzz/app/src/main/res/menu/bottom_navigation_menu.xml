@@ -2,11 +2,36 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
         <item
-            android:id="@+id/fragment_articles"
+            android:id="@+id/fragment_timeline"
             android:enabled="true"
-            android:icon="@drawable/outline_bookmark_add_24"
+            android:icon="@drawable/outline_density_small_24"
             app:iconTint="?attr/colorControlNormal"
             android:title="timeline"
+            android:layout_alignParentBottom="true"
+            app:showAsAction="ifRoom"/>
+
+        <item
+            android:id="@+id/fragment_addevent"
+            android:enabled="true"
+            android:icon="@drawable/baseline_event_24"
+            android:title="AddEvent"
+            android:layout_alignParentBottom="true"
+            app:showAsAction="ifRoom"/>
+
+        <item
+            android:id="@+id/fragment_favorites"
+            android:enabled="true"
+            android:icon="@drawable/baseline_favorite_24"
+            app:iconTint="?attr/colorControlNormal"
+            android:title="favs"
+            android:layout_alignParentBottom="true"
+            app:showAsAction="ifRoom"/>
+
+        <item
+            android:id="@+id/fragment_maps"
+            android:enabled="true"
+            android:icon="@drawable/baseline_map_24"
+            android:title="maps"
             android:layout_alignParentBottom="true"
             app:showAsAction="ifRoom"/>
 </menu>

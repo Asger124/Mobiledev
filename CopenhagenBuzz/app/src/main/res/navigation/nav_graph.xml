@@ -14,13 +14,24 @@
 
 
     <fragment
+        android:id="@+id/fragment_favorites"
+        android:name="dk.itu.moapd.copenhagenbuzz.asjo.view.FavoritesFragment"
+        android:label="temp_fav"
+        tools:layout="@layout/fragment_favorites"
+        />
+
+    <fragment
+        android:id="@+id/fragment_maps"
+        android:name="dk.itu.moapd.copenhagenbuzz.asjo.view.MapsFragment"
+        android:label="temp_maps"
+        tools:layout="@layout/fragment_maps"
+        />
+
+    <fragment
         android:id="@+id/fragment_timeline"
         android:name="dk.itu.moapd.copenhagenbuzz.asjo.view.TimelineFragment"
         android:label="temp_timeline"
         tools:layout="@layout/fragment_timeline"
         />
-
-
-
 
 </navigation>
