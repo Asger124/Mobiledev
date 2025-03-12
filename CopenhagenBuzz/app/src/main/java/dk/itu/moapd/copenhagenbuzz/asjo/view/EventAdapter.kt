@@ -22,6 +22,8 @@ class EventAdapter(private val context: Context, private var resource: Int,
         private val TAG = EventAdapter::class.qualifiedName
     }
 
+
+
     private class ViewHolder(view: View) {
         val textViewName: TextView = view.findViewById(R.id.text_view_name)
         val textViewType: TextView = view.findViewById(R.id.text_view_type)
@@ -42,8 +44,8 @@ class EventAdapter(private val context: Context, private var resource: Int,
         val viewHolder = (view.tag as? ViewHolder) ?: ViewHolder(view)
 
         Log.d(TAG, "Populate an item at position: $position")
-        getItem(position)?.let { dummy ->
-            populateViewHolder(viewHolder, dummy)
+        getItem(position)?.let { event ->
+            populateViewHolder(viewHolder, event)
         }
         view.tag = viewHolder
         return view
@@ -59,7 +61,7 @@ class EventAdapter(private val context: Context, private var resource: Int,
             textViewDescription.text = event.eventDescription
             textViewLocation.text = event.eventLocation
             textViewLocation.text = event.eventLocation
-
+            imageViewPhoto.setImageResource(R.drawable.ic_launcher_background)
 
         }
     }

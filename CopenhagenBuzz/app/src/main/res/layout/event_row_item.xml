@@ -43,7 +43,7 @@
                     app:icon="@drawable/baseline_favorite_24"
                     tools:layout_editor_absoluteX="318dp"
                     tools:layout_editor_absoluteY="2dp"
-                    app:layout_constraintBaseline_toBottomOf="@id/text_view_name"
+                    app:layout_constraintBaseline_toTopOf="@id/text_view_type"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
             <TextView
@@ -84,7 +84,7 @@
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf ="@+id/image_view_photo"/>
+                app:layout_constraintTop_toBottomOf="@+id/image_view_photo"/>
 
             <TextView
                 android:id="@+id/text_view_date"
@@ -98,7 +98,7 @@
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf ="@id/text_view_location"/>
+                app:layout_constraintTop_toBottomOf ="@id/text_view_location"/>
 
 
             <TextView
