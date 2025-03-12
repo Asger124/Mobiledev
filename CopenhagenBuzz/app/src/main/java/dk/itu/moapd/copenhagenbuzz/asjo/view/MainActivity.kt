@@ -33,21 +33,29 @@ import android.view.MenuItem
 import androidx.core.view.WindowCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.ActivityMainBinding
 
 
+/**
+ * An Activity class which serves as the primary activity after login.
+ *  It sets up navigation components, manages the top app bar menu,
+ *  and handles user authentication state.
+ *  This activity hosts fragments managed by the FragmentManager.
+ */
+
 class MainActivity : AppCompatActivity() {
 
-    //Variables used by class
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    /**
+     * View binding instance for accessing UI elements.
+     */
     private lateinit var binding: ActivityMainBinding
 
-
+    /**
+     * Called when the activity is starting. Sets up the navigation host, app bar, and bottom navigation.
+     * @param savedInstanceState Contains data from a previously saved instance, if available.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
@@ -66,14 +74,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.bottomNavigation.setupWithNavController(navController)
-        //binding.bottomNavigationRail.setupWithNavController(navController)
-
 
         invalidateOptionsMenu()
         setupMenuListener()
 
     }
 
+    /**
+     * Inflates the menu for the top app bar.
+     * @param menu The menu to be inflated.
+     * @return Boolean indicating success.
+     */
         override fun onCreateOptionsMenu(menu: Menu): Boolean {
             Log.d("create", "Create called")
             val inflater: MenuInflater = menuInflater
@@ -81,6 +92,11 @@ class MainActivity : AppCompatActivity() {
             return true
         }
 
+    /**
+     * Prepares the options menu before displaying it, based on the user's login state.
+     * @param menu The menu to be modified.
+     * @return Boolean indicating success.
+     */
         override fun onPrepareOptionsMenu(menu: Menu): Boolean {
             Log.d("MenuDebug", "onPrepareOptionsMenu called")
 
@@ -98,7 +114,11 @@ class MainActivity : AppCompatActivity() {
             return true
         }
 
-        //Controls what actions are performed when a User clicks on the menu items
+        /**
+         * Handles menu item selections.
+         * @param item The selected menu item.
+         * @return Boolean indicating whether the event was handled.
+         */
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
             return when (item.itemId) {
                 R.id.login, R.id.logout -> {
@@ -112,13 +132,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        override fun onSupportNavigateUp(): Boolean {
-            val navController = findNavController(R.id.fragment_container_view)
-            return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-        }
-
-
-
         private fun setupMenuListener() {
             binding.topAppBar.setOnMenuItemClickListener { menuItem ->
                 onOptionsItemSelected(menuItem)
@@ -127,3 +140,4 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
