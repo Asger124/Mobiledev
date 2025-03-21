@@ -12,6 +12,10 @@
     <string name="hello_maps_fragment">Hello Maps fragment</string>
     <string name="hello_favorites_fragment">Hello favorites fragment</string>
     <string name="hello_timeline_fragment">Hello timeline fragment</string>
+    <string name="Favorite_button">Like</string>
+    <string name="Photo_view">Photo</string>
+    <string name="event_row_edit">Edit</string>
+    <string name="event_row_info">Info</string>
 
 
 </resources>
