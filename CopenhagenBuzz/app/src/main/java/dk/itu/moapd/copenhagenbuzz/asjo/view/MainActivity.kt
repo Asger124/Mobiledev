@@ -132,6 +132,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    /**
+     * Sets up a menu listener for item clicks in the menu.
+     * Calls onOptionsSelected when an item is clicked.
+     */
         private fun setupMenuListener() {
             binding.topAppBar.setOnMenuItemClickListener { menuItem ->
                 onOptionsItemSelected(menuItem)
