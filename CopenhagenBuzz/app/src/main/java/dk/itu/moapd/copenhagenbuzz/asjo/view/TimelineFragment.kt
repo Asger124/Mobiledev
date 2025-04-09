@@ -13,7 +13,7 @@ import dk.itu.moapd.copenhagenbuzz.asjo.viewmodel.DataViewModel
 
 
 class TimelineFragment : Fragment() {
-    // TODO: Rename and change types of parameters
+
     private var _binding: FragmentTimelineBinding? = null
 
     private lateinit var viewModel: DataViewModel
@@ -42,8 +42,8 @@ class TimelineFragment : Fragment() {
 
         val adapter = EventAdapter(requireContext(),R.layout.event_row_item, mutableListOf())
 
-
         viewModel.events.observe(viewLifecycleOwner) {eventList ->
+
             adapter.addAll(eventList)
         }
 

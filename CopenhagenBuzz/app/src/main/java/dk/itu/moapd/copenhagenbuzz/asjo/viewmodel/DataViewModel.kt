@@ -28,6 +28,7 @@ class DataViewModel(
 
     init {
         fetchEvents()
+        fetchFavorites()
     }
 
     private fun generateRandomFavorites(events: List <Event >): List <Event > {
@@ -39,8 +40,13 @@ class DataViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val eventList = generateFakeEvents()
             _eventList.postValue(eventList)
-            val favoriteList = generateRandomFavorites(eventList)
-            _favoriteList.postValue(favoriteList)
+        }
+    }
+
+    private fun fetchFavorites() {
+        viewModelScope.launch(Dispatchers.IO) {
+             val favorites = generateRandomFavorites(generateFakeEvents())
+            _favoriteList.postValue(favorites)
         }
     }
 

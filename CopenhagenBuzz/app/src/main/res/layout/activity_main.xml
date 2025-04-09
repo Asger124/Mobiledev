@@ -20,18 +20,9 @@
               app:menu= "@menu/top_app_bar"
               app:titleCentered="true"/>
      </com.google.android.material.appbar.AppBarLayout>
-
-
-
-     <androidx.core.widget.NestedScrollView
-         android:layout_width="match_parent"
-         android:layout_height="match_parent"
-         android:fillViewport="true"
-         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-          <include
-              android:id="@+id/content_main"
-              layout="@layout/content_main"/>
-     </androidx.core.widget.NestedScrollView>
+     <include
+         android:id="@+id/content_main"
+         layout="@layout/content_main"/>
 
      <com.google.android.material.bottomnavigation.BottomNavigationView
          android:id="@+id/bottom_navigation"
