@@ -9,7 +9,9 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 
@@ -32,7 +34,7 @@ class EventAdapter(private val context: Context, private var resource: Int,
         val textViewDate: TextView = view.findViewById(R.id.text_view_date)
         val textViewDescription: TextView = view.findViewById(R.id.text_view_description)
         val buttonEdit: Button = view.findViewById(R.id.edit_button)
-        val buttonFavorite: Button = view.findViewById(R.id.button_favorite)
+        val buttonFavorite: MaterialButton = view.findViewById(R.id.button_favorite)
         val buttonInfo: Button = view.findViewById(R.id.button_favorite)
     }
 
@@ -54,6 +56,11 @@ class EventAdapter(private val context: Context, private var resource: Int,
     private fun populateViewHolder(viewHolder: ViewHolder, event:Event ) {
         with(viewHolder) {
 
+            if(event.isFavorite) {
+                buttonFavorite.setIconResource(R.drawable.baseline_favorite_24)
+            } else {
+                buttonFavorite.setIconResource(R.drawable.outline_favorite_border_24)
+            }
             textViewName.text = event.eventName
             textViewType.text = event.eventType
             textViewLocation.text = event.eventLocation

@@ -36,7 +36,6 @@ class FavoriteAdapter(private val data: ArrayList<Event>) : RecyclerView.Adapter
         Log.d(TAG, "Populate an item at position: $position")
 
 
-
         data[position].let(holder::bind)
     }
     override fun getItemCount() = data.size

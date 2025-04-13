@@ -7,7 +7,9 @@ data class Event(
     var eventLocation: String,
     var eventDateRange: Pair<LocalDate,LocalDate>,
     var eventType: String,
-    var eventDescription: String
+    var eventDescription: String,
+    var isFavorite: Boolean = false
+
 )
 
 

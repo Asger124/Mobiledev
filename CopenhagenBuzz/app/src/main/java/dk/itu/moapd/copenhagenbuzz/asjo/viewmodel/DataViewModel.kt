@@ -20,7 +20,7 @@ class DataViewModel(
 
     private val _favoriteList = MutableLiveData<List<Event>>()
 
-    val favorites: LiveData<List<Event>> get () = _favoriteList
+    val favorites: LiveData<List<Event>> get() = _favoriteList
 
     val events: LiveData<List<Event>> get() = _eventList
 
@@ -28,26 +28,6 @@ class DataViewModel(
 
     init {
         fetchEvents()
-        fetchFavorites()
-    }
-
-    private fun generateRandomFavorites(events: List <Event >): List <Event > {
-         val shuffledIndices = (events.indices).shuffled().take(25).sorted()
-         return shuffledIndices.mapNotNull { index -> events.getOrNull(index) } }
-
-
-    private fun fetchEvents() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val eventList = generateFakeEvents()
-            _eventList.postValue(eventList)
-        }
-    }
-
-    private fun fetchFavorites() {
-        viewModelScope.launch(Dispatchers.IO) {
-             val favorites = generateRandomFavorites(generateFakeEvents())
-            _favoriteList.postValue(favorites)
-        }
     }
 
     private fun generateFakeEvents(): List<Event> {
@@ -62,7 +42,7 @@ class DataViewModel(
             faker.number().numberBetween(1, 31)
         )
 
-        return List(40) {
+        return List(15) {
             Event(
                 eventName = faker.company().name(),
                 eventLocation = faker.country().capital(),
@@ -72,7 +52,35 @@ class DataViewModel(
             )
         }
     }
+
+
+    private fun generateRandomFavorites(events: List<Event>): List<Event> {
+        val shuffledIndices = (events.indices).shuffled().take(10)
+        return shuffledIndices.map { index -> events[index] }
+    }
+
+
+    private fun fetchEvents() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val eventList = generateFakeEvents()
+            _eventList.postValue(eventList)
+            val favorites = generateRandomFavorites(eventList)
+            favorites.forEach { it.isFavorite = true }
+            _favoriteList.postValue(favorites)
+
+        }
+    }
 }
+
+//    private fun fetchFavorites() {
+//        viewModelScope.launch(Dispatchers.IO) {
+//             val favorites = generateRandomFavorites(generateFakeEvents())
+//             favorites.forEach { it.isFavorite=true }
+//            _favoriteList.postValue(favorites)
+//        }
+//    }
+
+
 
 
 

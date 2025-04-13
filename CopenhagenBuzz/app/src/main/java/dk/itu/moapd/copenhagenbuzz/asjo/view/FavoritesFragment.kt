@@ -42,7 +42,7 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
 
-            viewModel = ViewModelProvider(this@FavoritesFragment)[DataViewModel::class.java]
+            viewModel = ViewModelProvider(requireActivity())[DataViewModel::class.java]
             // Define the recycler view layout manager and adapter.
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
             viewModel.favorites.observe(viewLifecycleOwner) { fav ->
