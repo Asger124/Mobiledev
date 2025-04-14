@@ -33,7 +33,9 @@ import android.view.MenuItem
 import androidx.core.view.WindowCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.ActivityMainBinding
 
@@ -46,6 +48,10 @@ import dk.itu.moapd.copenhagenbuzz.asjo.databinding.ActivityMainBinding
  */
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var auth: FirebaseAuth
+
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     /**
      * View binding instance for accessing UI elements.
@@ -75,9 +81,25 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigation.setupWithNavController(navController)
 
+        auth = FirebaseAuth.getInstance()
+
         invalidateOptionsMenu()
         setupMenuListener()
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        // Redirect the user to the LoginActivity if they are not logged in.
+        auth.currentUser ?: startLoginActivity()
+    }
+
+    private fun startLoginActivity() {
+        Intent(this, LoginActivity::class.java).apply {
+            // An alternative to instead of calling finish() method.
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }.let(::startActivity)
     }
 
     /**
@@ -85,63 +107,70 @@ class MainActivity : AppCompatActivity() {
      * @param menu The menu to be inflated.
      * @return Boolean indicating success.
      */
-        override fun onCreateOptionsMenu(menu: Menu): Boolean {
-            Log.d("create", "Create called")
-            val inflater: MenuInflater = menuInflater
-            inflater.inflate(R.menu.top_app_bar, menu)
-            return true
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        Log.d("create", "Create called")
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.top_app_bar, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        // Handle top app bar menu item clicks.
+        R.id.account -> {
+            UserInfoDialogFragment().apply {
+                isCancelable = false
+            }.also { dialogFragment ->
+                dialogFragment.show(supportFragmentManager, "UserInfoDialogFragment")
+            }
+            true
         }
+
+        R.id.logout -> {
+            auth.signOut()
+            startLoginActivity()
+            true
+        }
+
+        else -> super.onOptionsItemSelected(item)
+    }
 
     /**
      * Prepares the options menu before displaying it, based on the user's login state.
      * @param menu The menu to be modified.
      * @return Boolean indicating success.
      */
-        override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-            Log.d("MenuDebug", "onPrepareOptionsMenu called")
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
 
-            val isLoggedIn = intent.getBooleanExtra("isLoggedIn", false)
-            Log.d("MenuDebug", "isLoggedIn: $isLoggedIn")
-
-            //Set up menuItem(Login and logout) components.
-            //Based in the value of isLoggedIn, set which component should be visible
-            menu.findItem(R.id.login).isVisible =
-                intent.getBooleanExtra("isLoggedIn", false)
-
-            //If user is logged out
-            menu.findItem(R.id.logout).isVisible =
-                !intent.getBooleanExtra("isLoggedIn", false)
-            return true
-        }
-
-        /**
-         * Handles menu item selections.
-         * @param item The selected menu item.
-         * @return Boolean indicating whether the event was handled.
-         */
-        override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            return when (item.itemId) {
-                R.id.login, R.id.logout -> {
-                    // Start LoginActivity when Login and Logout components are clicked.
-                    val intent = Intent(baseContext, LoginActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
-
-                else -> super.onOptionsItemSelected(item)
+        val user = auth.currentUser
+        //Set up menuItem(Login and logout) components.
+        //Based in the value of isLoggedIn, set which component should be visible
+        if (user != null) {
+            if (user.isAnonymous) {
+                menu.findItem(R.id.account).isVisible = false
             }
         }
+        return true
+    }
+
+
+    /**
+     * Handles menu item selections.
+     * @param item The selected menu item.
+     * @return Boolean indicating whether the event was handled.
+     */
+
 
     /**
      * Sets up a menu listener for item clicks in the menu.
      * Calls onOptionsSelected when an item is clicked.
      */
-        private fun setupMenuListener() {
-            binding.topAppBar.setOnMenuItemClickListener { menuItem ->
-                onOptionsItemSelected(menuItem)
-            }
-
+    private fun setupMenuListener() {
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            onOptionsItemSelected(menuItem)
         }
 
     }
+}
+
+
 

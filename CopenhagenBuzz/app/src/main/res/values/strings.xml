@@ -1,4 +1,6 @@
 <resources>
+    <string name="user_info_title">User Info</string>
+    <string name="unknown_user">Unknown User</string>
     <string name="app_name">CopenhagenBuzz</string>
     <string name="event_type">Event type</string>
     <string name="event_date">Event date</string>
@@ -8,7 +10,6 @@
     <string name="event_add">Add Event</string>
     <string name="user_login">Login</string>
     <string name="guest_login">Guest</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_maps_fragment">Hello Maps fragment</string>
     <string name="hello_favorites_fragment">Hello favorites fragment</string>
     <string name="hello_timeline_fragment">Hello timeline fragment</string>
@@ -16,6 +17,7 @@
     <string name="Photo_view">Photo</string>
     <string name="event_row_edit">Edit</string>
     <string name="event_row_info">Info</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
