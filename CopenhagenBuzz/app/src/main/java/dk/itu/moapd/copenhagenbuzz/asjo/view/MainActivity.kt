@@ -30,6 +30,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.core.view.WindowCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
@@ -79,7 +80,29 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        binding.bottomNavigation.setupWithNavController(navController)
+        //binding.bottomNavigation.setupWithNavController(navController)
+
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            val isGuest = FirebaseAuth.getInstance().currentUser?.isAnonymous == true
+            val guestRestrictedDestinations = setOf(
+                R.id.fragment_addevent,
+                R.id.fragment_favorites // replace with actual ID
+            )
+
+            return@setOnItemSelectedListener when {
+                isGuest && item.itemId in guestRestrictedDestinations -> {
+                    Toast.makeText(this, "Guests can't access this section", Toast.LENGTH_SHORT)
+                        .show()
+                    true
+                }
+
+                else -> {
+                    navController.navigate(item.itemId)
+                    true
+                }
+            }
+        }
+
 
         auth = FirebaseAuth.getInstance()
 
