@@ -37,8 +37,9 @@ class TimelineFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+       binding.apply {
         viewModel = ViewModelProvider(requireActivity())[DataViewModel::class.java]
-        val listView = view.findViewById<ListView>(R.id.listView)
+        //val listView = view.findViewById<ListView>(R.id.listView)
 
         val adapter = EventAdapter(requireContext(),R.layout.event_row_item, mutableListOf())
 
@@ -51,7 +52,7 @@ class TimelineFragment : Fragment() {
 
         }
 
-
+}
 
     override fun onDestroyView() {
         super.onDestroyView()

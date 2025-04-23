@@ -14,6 +14,7 @@
             android:id="@+id/fragment_addevent"
             android:enabled="true"
             android:icon="@drawable/baseline_event_24"
+            app:iconTint="?attr/colorControlNormal"
             android:title="AddEvent"
             android:layout_alignParentBottom="true"
             app:showAsAction="ifRoom"/>
