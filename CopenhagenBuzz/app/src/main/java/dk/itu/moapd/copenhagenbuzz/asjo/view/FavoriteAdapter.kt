@@ -4,16 +4,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FavoriteRowItemBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 
 
-class FavoriteAdapter(private val data: ArrayList<Event>) : RecyclerView.Adapter<FavoriteAdapter.ViewHolder>() {
+class FavoriteAdapter(options: FirebaseRecyclerOptions<Event>) : FirebaseRecyclerAdapter<Event,FavoriteAdapter.ViewHolder>(options) {
 
 
     companion object {
-        private val TAG = FavoriteAdapter::class.qualifiedName
+         const val TAG = "FavoriteAdapter"
     }
 
      class ViewHolder(private val binding: FavoriteRowItemBinding) :
@@ -21,9 +23,9 @@ class FavoriteAdapter(private val data: ArrayList<Event>) : RecyclerView.Adapter
         fun bind(favorite: Event) {
             with(binding) {
                 // Fill out the Material Design card.
-                imageViewPhoto.setImageResource(R.drawable.ic_launcher_background)
-                textViewName.text = favorite.eventName
-                textViewSubtitle.text = favorite.eventType
+                    imageViewPhoto.setImageResource(R.drawable.ic_launcher_background)
+                    textViewName.text = favorite.eventName
+                    textViewSubtitle.text = favorite.eventType
             }
         }
     }
@@ -32,11 +34,10 @@ class FavoriteAdapter(private val data: ArrayList<Event>) : RecyclerView.Adapter
         .inflate(LayoutInflater.from(parent.context), parent, false)
         .let(::ViewHolder)
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, event:Event) {
         Log.d(TAG, "Populate an item at position: $position")
 
+        holder.bind(event)
 
-        data[position].let(holder::bind)
     }
-    override fun getItemCount() = data.size
 }

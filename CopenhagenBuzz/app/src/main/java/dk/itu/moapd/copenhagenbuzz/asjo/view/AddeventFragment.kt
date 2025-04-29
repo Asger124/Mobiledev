@@ -11,10 +11,15 @@ import android.view.ViewGroup
 import android.widget.EditText
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentAddeventBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 
@@ -26,11 +31,16 @@ class AddeventFragment : Fragment() {
     private lateinit var eventType: EditText
     private lateinit var eventDate: EditText
     private lateinit var eventDescription: EditText
-    private val event: Event = Event("", "", Pair(LocalDate.now(), LocalDate.now()), "", "")
+    private val event: Event = Event("", "","", 0L,0L, "", "")
     private var selectedStartDate: LocalDate? = null
     private var selectedEndDate: LocalDate? = null
-    private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private var _binding: FragmentAddeventBinding? = null
+
+        val auth = FirebaseAuth.getInstance()
+        val database = Firebase.database(dotenv).reference
+
+
 
     private val binding
         get() = requireNotNull(_binding){
@@ -42,6 +52,7 @@ class AddeventFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = FragmentAddeventBinding.inflate(inflater,container, false).also {
+
         _binding = it
 
         setUpEventAttr()
@@ -59,7 +70,10 @@ class AddeventFragment : Fragment() {
         eventDescription = binding.editTextEventDescription
 
         eventDate.setOnClickListener {
-            pickDateRange(eventDate)
+            DatePickerUtils.pickDateRange(requireContext(),eventDate) {startDate, endDate ->
+                selectedStartDate = startDate
+                selectedEndDate = endDate
+            }
         }
 
         addEventButton.setOnClickListener {
@@ -70,45 +84,54 @@ class AddeventFragment : Fragment() {
                 eventLocation.text.toString().isNotEmpty() &&
                 eventType.text.toString().isNotEmpty() &&
                 eventDate.text.toString().isNotEmpty() &&
-                eventDescription.text.toString().isNotEmpty()
+                eventDescription.text.toString().isNotEmpty() &&
+                selectedStartDate != null && selectedEndDate != null
             )
             {
+                val newEvent = Event (
+                    userId = auth.currentUser!!.uid,
+                    eventName = eventName.text.toString().trim(),
+                    eventLocation = eventName.text.toString().trim (),
+                    startDate = selectedStartDate!!.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                    endDate = selectedEndDate!!.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                    eventType = eventType.text.toString().trim(),
+                    eventDescription = eventDescription.text.toString().trim()
+                )
 
-                // Create event object attributes.d
-                event.eventName = eventName.text.toString().trim()
-                event.eventLocation = eventLocation.text.toString().trim()
-                event.eventDateRange = Pair(selectedStartDate!!, selectedEndDate!!)
-                event.eventType = eventType.text.toString().trim()
-                event.eventDescription = eventDescription.text.toString().trim()
+                auth.currentUser?.let { _ ->
+                    database.child("events")
+                        .push()
+                        .setValue(newEvent)
+                }
 
-                // Show Snackbar(information about event when added)
                 showMessage()
+
+
             }
 
         }
 
     }
 
-    private fun pickDateRange(editText: EditText) {
-        val calendar = Calendar.getInstance()
-
-        DatePickerDialog(
-            requireContext(),
-            { _, startYear, startMonth, startDay ->
-                selectedStartDate = LocalDate.of(startYear, startMonth + 1, startDay)
-
-                DatePickerDialog(requireContext(), { _, endYear, endMonth, endDay ->
-                    selectedEndDate = LocalDate.of(endYear, endMonth + 1, endDay)
-
-                    editText.setText("${dateFormatter.format(selectedStartDate)}, - ${dateFormatter.format(selectedEndDate)}"
-                    )
-                }, startYear, startMonth, startDay).show() // Default date: Start Date
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ).show()
-    }
+//     fun pickDateRange(editText: EditText) {
+//        val calendar = Calendar.getInstance()
+//
+//        DatePickerDialog(
+//            requireContext(),
+//            { _, startYear, startMonth, startDay ->
+//                selectedStartDate = LocalDate.of(startYear, startMonth + 1, startDay)
+//
+//                DatePickerDialog(requireContext(), { _, endYear, endMonth, endDay ->
+//                    selectedEndDate = LocalDate.of(endYear, endMonth + 1, endDay)
+//
+//                    editText.setText("${dateFormatter.format(selectedStartDate)}, - ${dateFormatter.format(selectedEndDate)}")
+//                }, startYear, startMonth, startDay).show() // Default date: Start Date
+//            },
+//            calendar.get(Calendar.YEAR),
+//            calendar.get(Calendar.MONTH),
+//            calendar.get(Calendar.DAY_OF_MONTH)
+//        ).show()
+//    }
 
     private fun showMessage() {
         val msg = ("Event added using\n$event")

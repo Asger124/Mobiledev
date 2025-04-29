@@ -39,7 +39,7 @@ class LoginActivity : AppCompatActivity() {
         val signInIntent = AuthUI.getInstance()
             .createSignInIntentBuilder()
             .setAvailableProviders(providers)
-            .setIsSmartLockEnabled(true)
+            .setIsSmartLockEnabled(false)
             .setLogo(R.drawable.baseline_firebase_24)
             .setTheme(R.style.Theme_CopenhagenBuzz)
             .apply {

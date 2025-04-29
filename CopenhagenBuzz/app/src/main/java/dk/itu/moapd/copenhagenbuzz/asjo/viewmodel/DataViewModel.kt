@@ -44,9 +44,11 @@ class DataViewModel(
 
         return List(15) {
             Event(
+                userId = faker.number().toString(),
                 eventName = faker.company().name(),
                 eventLocation = faker.country().capital(),
-                eventDateRange = Pair(date1, date2),
+                startDate = faker.number().randomNumber(),
+                endDate = faker.number().randomNumber(),
                 eventType = faker.hipster().word(),
                 eventDescription = faker.lorem().sentence()
             )

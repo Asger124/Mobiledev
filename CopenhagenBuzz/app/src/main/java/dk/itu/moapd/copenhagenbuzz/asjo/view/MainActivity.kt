@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
             val isGuest = FirebaseAuth.getInstance().currentUser?.isAnonymous == true
             val guestRestrictedDestinations = setOf(
                 R.id.fragment_addevent,
-                R.id.fragment_favorites // replace with actual ID
+                R.id.fragment_favorites
             )
 
             return@setOnItemSelectedListener when {

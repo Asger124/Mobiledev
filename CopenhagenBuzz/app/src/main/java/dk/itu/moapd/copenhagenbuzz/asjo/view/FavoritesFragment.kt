@@ -5,10 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import dk.itu.moapd.copenhagenbuzz.asjo.R
+import dk.itu.moapd.copenhagenbuzz.asjo.databinding.EventRowItemBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentFavoritesBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 import dk.itu.moapd.copenhagenbuzz.asjo.viewmodel.DataViewModel
@@ -20,15 +26,12 @@ class FavoritesFragment : Fragment() {
 
     private lateinit var viewModel: DataViewModel
 
-
-
+    private  lateinit var adapter: FavoriteAdapter
 
     private val binding
         get() = requireNotNull(_binding) {
             "Cannot access this"
         }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,23 +43,27 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
-        binding.apply {
+        val uid   = FirebaseAuth.getInstance().currentUser!!.uid
+        val query = FirebaseDatabase.getInstance(dotenv)
+            .getReference("favorites")
+            .child(uid)
 
-            viewModel = ViewModelProvider(requireActivity())[DataViewModel::class.java]
-            // Define the recycler view layout manager and adapter.
-            recyclerView.layoutManager = LinearLayoutManager(requireContext())
-            viewModel.favorites.observe(viewLifecycleOwner) { fav ->
-                val adapter = FavoriteAdapter(ArrayList(fav))
-                recyclerView.adapter = adapter
-            }
+        val options = FirebaseRecyclerOptions.Builder<Event>()
+            .setQuery(query, Event::class.java)
+            .setLifecycleOwner(viewLifecycleOwner)   // auto start/stop
+            .build()
 
-        }
+        adapter = FavoriteAdapter(options)
 
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        adapter.startListening()
     }
-
 
         override fun onDestroyView() {
         super.onDestroyView()
+            adapter.stopListening()
         _binding = null
     }
 
