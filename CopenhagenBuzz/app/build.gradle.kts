@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.firebase.ui.database)
     implementation(libs.dotenv.kotlin)
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

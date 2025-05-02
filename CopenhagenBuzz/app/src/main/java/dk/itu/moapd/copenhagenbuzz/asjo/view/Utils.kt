@@ -4,21 +4,40 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.icu.util.Calendar
 import android.widget.EditText
-import androidx.core.content.ContentProviderCompat.requireContext
-import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
+import androidx.core.content.edit
+import dk.itu.moapd.copenhagenbuzz.asjo.R
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
-interface OnItemClickListener  {
+internal object SharedPreferenceUtil {
 
     /**
-     * Implement this method to be executed when the user press an item in the `RecyclerView` for a
-     * long time.
-     *
-     * @param dummy An instance of `Dummy` class.
-     * @param position The selected position in the `RecyclerView`.
+     * The name of the SharedPreferences variable.
      */
-    fun onItemClickListener(event: Event, position: Int)
+    const val KEY_FOREGROUND_ENABLED = "tracking_foreground_location"
+
+    /**
+     * Stores the location updates state in SharedPreferences.
+     *
+     * @param requestingLocationUpdates The location updates state.
+     */
+    fun saveLocationTrackingPref(context: Context, requestingLocationUpdates: Boolean) =
+        context.getSharedPreferences(
+            context.getString(R.string.preference_file_key), Context.MODE_PRIVATE).edit {
+            putBoolean(KEY_FOREGROUND_ENABLED, requestingLocationUpdates)
+        }
+
+    /**
+     * Return the timestamp as a date `String`.
+     *
+     * @return A formatted date range string in the format "E, MMM dd yyyy - E, MMM dd yyyy".
+     */
+    fun Long.toSimpleDateFormat(): String {
+        val dateFormat = SimpleDateFormat("E, MMM dd yyyy hh:mm:ss a", Locale.US)
+        return dateFormat.format(this)
+    }
 
 }
 
