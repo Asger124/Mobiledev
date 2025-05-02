@@ -20,9 +20,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -36,6 +39,46 @@ import java.util.Date
 import java.util.Locale
 
 class MapsFragment : Fragment(), OnMapReadyCallback, SharedPreferences.OnSharedPreferenceChangeListener {
+
+    // Add this at the class level
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission was just granted, enable location features
+            if (::googleMap.isInitialized) {
+                try {
+                    googleMap.isMyLocationEnabled = true
+                } catch (e: SecurityException) {
+                    Log.e("MapsFragment", "Error enabling location: ${e.message}")
+                }
+            }
+
+            // Start location updates
+            if (locationServiceBound) {
+                locationService.subscribeToLocationUpdates()
+            } else {
+                // If service is not bound yet, bind it
+                Intent(requireContext(), LocationService::class.java).let { serviceIntent ->
+                    requireActivity().bindService(
+                        serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+                }
+            }
+        } else {
+            // Permission denied
+            Toast.makeText(
+                requireContext(),
+                "Location permission is required for location features",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    // Then modify your requestUserPermissions method
+    private fun requestUserPermissions() {
+        if (!checkPermission())
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
 
     private inner class LocationBroadcastReceiver : BroadcastReceiver() {
 
@@ -53,9 +96,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SharedPreferences.OnSharedP
         }
 
     }
-
     private lateinit var googleMap: GoogleMap
-
 
     private var _binding: FragmentMapsBinding? = null
 
@@ -72,6 +113,22 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SharedPreferences.OnSharedP
 
     private lateinit var locationBroadcastReceiver: LocationBroadcastReceiver
 
+    private lateinit var locationService: LocationService
+    private var locationServiceBound = false
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            val binder = service as LocationService.LocalBinder
+            locationService = binder.service
+            locationServiceBound = true
+            locationService.subscribeToLocationUpdates()
+        }
+        override fun onServiceDisconnected(name: ComponentName) {
+            locationServiceBound = false
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,15 +140,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SharedPreferences.OnSharedP
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sharedPreferences = requireActivity()
+            .getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+        // Initialize the broadcast receiver.
+        locationBroadcastReceiver = LocationBroadcastReceiver()
+
         val mapFragment = childFragmentManager
             .findFragmentById(binding.map.id) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
-
-        sharedPreferences = requireActivity()
-            .getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
-
-        // Initialize the broadcast receiver.
-        locationBroadcastReceiver = LocationBroadcastReceiver()
     }
 
 
@@ -106,6 +162,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SharedPreferences.OnSharedP
 
         // Enable the location layer. Request the permission if it is not granted.
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
         if (checkPermission()) {
             googleMap.isMyLocationEnabled = true
 
@@ -117,13 +175,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SharedPreferences.OnSharedP
     override fun onStart() {
         super.onStart()
 
-        ContextCompat.startForegroundService(
-            requireContext(),
-            Intent(requireContext(), LocationService::class.java)
-        )
+        Intent(requireContext(), LocationService::class.java).let { serviceIntent ->
+            requireActivity().bindService(
+                serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
+            locationBroadcastReceiver,
+            IntentFilter(LocationService.ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST))
 
         // Register the shared preference change listener.
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
     }
 
@@ -131,22 +192,31 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SharedPreferences.OnSharedP
         super.onResume()
 
         // Register the broadcast receiver.
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
-            locationBroadcastReceiver,
-            IntentFilter(LocationService.ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST)
-        )
+
     }
+
     override fun onPause() {
         // Unregister the broadcast receiver.
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(
-            locationBroadcastReceiver
-        )
         super.onPause()
+
+        if (::locationService.isInitialized) {
+            LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(locationBroadcastReceiver)
+
+            // Unsubscribe from location updates if the service is no longer a foreground service
+            locationService.unsubscribeToLocationUpdates()
+        }
+
     }
     override fun onStop() {
 
+        if (locationServiceBound) {
+            requireActivity().unbindService(serviceConnection)
+            locationServiceBound = false
+        }
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(locationBroadcastReceiver)
+
         // Unregister the shared preference change listener.
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        //sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
         super.onStop()
     }
 
@@ -162,27 +232,32 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SharedPreferences.OnSharedP
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-    private fun requestUserPermissions() {
-        if (!checkPermission())
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
-            )
-    }
+//    private fun requestUserPermissions() {
+//        if (!checkPermission())
+//            ActivityCompat.requestPermissions(
+//                requireActivity(),
+//                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+//                REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
+//            )
+//    }
     private fun updateLocationDetails(location: Location) {
-        val user = LatLng(location.latitude, location.longitude)
-        googleMap.addMarker(
-            MarkerOptions().position(user).title("You are here")
-        )
-        // 2) Show lat/lng in your overlay
-        with(binding) {
-            coordOverlay.text = String.format(
-                Locale.getDefault(),
-                "Lat: %.6f\nLng: %.6f",
-                location.latitude,
-                location.longitude
-            )
+
+        if(checkPermission()) {
+                    val user = LatLng(location.latitude, location.longitude)
+                    googleMap.addMarker(
+                        MarkerOptions().position(user).title("You are here")
+                    )
+                    // 2) Show lat/lng in your overlay
+                    with(binding) {
+                        coordOverlay.text = String.format(
+                            Locale.getDefault(),
+                            "Lat: %.6f\nLng: %.6f",
+                            location.latitude,
+                            location.longitude
+                        )
+            }
+        }else {
+            requestUserPermissions()
         }
 
     }

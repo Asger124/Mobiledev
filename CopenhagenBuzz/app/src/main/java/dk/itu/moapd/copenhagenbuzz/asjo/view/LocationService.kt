@@ -80,10 +80,6 @@ class LocationService : Service() {
         return localBinder
     }
 
-    private fun hasLocationPermission(): Boolean =
-        ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED
-
     fun subscribeToLocationUpdates() {
 
 
@@ -105,28 +101,28 @@ class LocationService : Service() {
             SharedPreferenceUtil.saveLocationTrackingPref(this, false)
         }
     }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Create a notification channel (if needed) and build a notification.
-        val channelId = "location_channel"
-        val channelName = "Location Service Channel"
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
-        notificationManager.createNotificationChannel(channel)
-
-        val notification = NotificationCompat.Builder(this, "location_channel")
-            .setContentTitle("Location Service")
-            .setContentText("Tracking location in background")
-            .setSmallIcon(R.drawable.baseline_firebase_24)
-            .build()
-
-        // Start the service in the foreground
-        startForeground(1, notification)
-
-        subscribeToLocationUpdates()
-
-        return START_STICKY
-    }
+//
+//    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+//        // Create a notification channel (if needed) and build a notification.
+//        val channelId = "location_channel"
+//        val channelName = "Location Service Channel"
+//        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//        val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+//        notificationManager.createNotificationChannel(channel)
+//
+//        val notification = NotificationCompat.Builder(this, "location_channel")
+//            .setContentTitle("Location Service")
+//            .setContentText("Tracking location in background")
+//            .setSmallIcon(R.drawable.baseline_firebase_24)
+//            .build()
+//
+//        // Start the service in the foreground
+//        startForeground(1, notification)
+//
+//        subscribeToLocationUpdates()
+//
+//        return START_STICKY
+//    }
     fun unsubscribeToLocationUpdates() {
         // Unsubscribe to location changes.
         try {
