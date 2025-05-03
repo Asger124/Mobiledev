@@ -101,10 +101,9 @@ class EventAdapter(options: FirebaseListOptions<Event>,private val fm: FragmentM
                 dialog.show(fm, "UpdateDataDialog")
             }
 
-
             textViewName.text = event.eventName
             textViewType.text = event.eventType
-            textViewLocation.text = event.eventLocation
+            textViewLocation.text = event.eventLocation?.address ?: ""
             textViewDate.text = "${event.startDate} - ${event.endDate}"
             textViewDescription.text = event.eventDescription
             imageViewPhoto.setImageResource(R.drawable.ic_launcher_background) // Placeholder

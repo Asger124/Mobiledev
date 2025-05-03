@@ -3,7 +3,9 @@ package dk.itu.moapd.copenhagenbuzz.asjo.view
 import android.app.DatePickerDialog
 import android.content.Context
 import android.icu.util.Calendar
+import android.location.Geocoder
 import android.widget.EditText
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.edit
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import java.text.SimpleDateFormat

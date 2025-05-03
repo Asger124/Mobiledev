@@ -2,8 +2,10 @@ package dk.itu.moapd.copenhagenbuzz.asjo.view
 
 import android.app.Dialog
 import android.content.DialogInterface
+import android.location.Geocoder
 import android.os.Bundle
 import android.provider.CalendarContract.Events
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.ktx.auth
@@ -11,10 +13,13 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentUpdateDialogBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
+import dk.itu.moapd.copenhagenbuzz.asjo.model.EventLocation
 import dk.itu.moapd.copenhagenbuzz.asjo.view.AddeventFragment
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
+
 private var selectedStartDate: LocalDate? = null
 private var selectedEndDate: LocalDate? = null
 
@@ -39,7 +44,7 @@ class UpdateDataDialogFragment(private val event: Event, private val position: I
         // Inflate the view using view binding.
         _binding = FragmentUpdateDialogBinding.inflate(layoutInflater)
         binding.editTextEventName.setText(event.eventName)
-        binding.editTextEventLocation.setText(event.eventLocation)
+        binding.editTextEventLocation.setText(event.eventLocation?.address)
 
         binding.editTextEventDate.setOnClickListener {
             DatePickerUtils.pickDateRange(
@@ -60,11 +65,22 @@ class UpdateDataDialogFragment(private val event: Event, private val position: I
                 binding.editTextEventDescription.text.toString().isNotEmpty() &&
                 binding.editTextEventDate.text.toString().isNotEmpty() &&
                 selectedStartDate != null && selectedEndDate != null
-            ) {
+            )
+            {
+            val geocoder = Geocoder(requireContext(), Locale.getDefault())
+            val address = geocoder.getFromLocationName(binding.editTextEventLocation.text.toString(),1)
+
+
+            if(!address.isNullOrEmpty()) {
+                val lat = address[0].latitude
+                val long = address[0].longitude
+                val street = address[0].getAddressLine(0)
+
+
                 val updatedEvent = Event(
                     userId = uid,
                     eventName = binding.editTextEventName.text.toString().trim(),
-                    eventLocation = binding.editTextEventLocation.text.toString().trim(),
+                    eventLocation = EventLocation(street,lat, long),
                     startDate = selectedStartDate!!.atStartOfDay(ZoneId.systemDefault()).toInstant()
                         .toEpochMilli(),
                     endDate = selectedEndDate!!.atStartOfDay(ZoneId.systemDefault()).toInstant()
@@ -72,6 +88,7 @@ class UpdateDataDialogFragment(private val event: Event, private val position: I
                     eventType = binding.editTextEventType.text.toString().trim(),
                     eventDescription = binding.editTextEventDescription.text.toString().trim()
                 )
+
                 adapter.getRef(position).setValue(updatedEvent)
 
                 val eventKey = adapter.getRef(position).key!!
@@ -87,12 +104,11 @@ class UpdateDataDialogFragment(private val event: Event, private val position: I
                         }
                     }
                 }
+            }else {
+                Toast.makeText(context, "Failed to fetch location coord from edit ", Toast.LENGTH_SHORT)
+                    .show()
+            }
 
-//                favRef.get().addOnSuccessListener { snap ->
-//                    if (snap.exists()) {
-//                        favRef.setValue(updatedEvent)
-//                    }
-//                }
             }
                 dismiss()
             }

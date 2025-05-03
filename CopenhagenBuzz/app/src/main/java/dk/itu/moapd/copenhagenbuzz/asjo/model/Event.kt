@@ -6,8 +6,7 @@ import java.time.LocalDate
 data class Event(
     var userId : String ? = null,
     var eventName: String? = null,
-    var eventLocation: String? = null,
-    //var eventDateRange: Pair<LocalDate,LocalDate>,
+    var eventLocation: EventLocation? = null,
     var startDate : Long? = null,
     var endDate : Long? = null,
     var eventType: String? = null,

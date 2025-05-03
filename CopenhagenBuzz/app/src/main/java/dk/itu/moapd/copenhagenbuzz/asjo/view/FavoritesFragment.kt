@@ -1,5 +1,6 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,14 +18,12 @@ import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.EventRowItemBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentFavoritesBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
-import dk.itu.moapd.copenhagenbuzz.asjo.viewmodel.DataViewModel
 
 
 class FavoritesFragment : Fragment() {
 
     private var _binding: FragmentFavoritesBinding? = null
 
-    private lateinit var viewModel: DataViewModel
 
     private  lateinit var adapter: FavoriteAdapter
 
@@ -56,7 +55,7 @@ class FavoritesFragment : Fragment() {
         adapter = FavoriteAdapter(options)
 
         binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.layoutManager = LinearLayoutManager(context)
 
         adapter.startListening()
     }

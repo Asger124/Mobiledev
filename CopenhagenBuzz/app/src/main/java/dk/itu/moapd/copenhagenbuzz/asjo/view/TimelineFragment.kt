@@ -20,7 +20,6 @@ import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentTimelineBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
-import dk.itu.moapd.copenhagenbuzz.asjo.viewmodel.DataViewModel
 import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.dotenv
 
@@ -30,8 +29,6 @@ class TimelineFragment : Fragment(R.layout.fragment_timeline) {
 
     private var _binding: FragmentTimelineBinding? = null
 
-
-    private lateinit var viewModel: DataViewModel
 
     val isGuest = FirebaseAuth.getInstance().currentUser?.isAnonymous == true
 

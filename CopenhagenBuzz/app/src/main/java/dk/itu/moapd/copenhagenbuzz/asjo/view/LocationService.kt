@@ -82,14 +82,13 @@ class LocationService : Service() {
 
     fun subscribeToLocationUpdates() {
 
-
         // Save the location tracking preference.
         SharedPreferenceUtil.saveLocationTrackingPref(this, true)
 
         // Sets the accuracy and desired interval for active location updates.
         val locationRequest = LocationRequest
-            .Builder(Priority.PRIORITY_HIGH_ACCURACY, 10_000L)
-            .setMinUpdateIntervalMillis(30_000L)
+            .Builder(Priority.PRIORITY_HIGH_ACCURACY, 60_000L)
+            .setMinUpdateIntervalMillis(60_000L)
             .setMaxUpdateDelayMillis(120_000L)
             .build()
 
@@ -101,28 +100,7 @@ class LocationService : Service() {
             SharedPreferenceUtil.saveLocationTrackingPref(this, false)
         }
     }
-//
-//    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-//        // Create a notification channel (if needed) and build a notification.
-//        val channelId = "location_channel"
-//        val channelName = "Location Service Channel"
-//        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
-//        notificationManager.createNotificationChannel(channel)
-//
-//        val notification = NotificationCompat.Builder(this, "location_channel")
-//            .setContentTitle("Location Service")
-//            .setContentText("Tracking location in background")
-//            .setSmallIcon(R.drawable.baseline_firebase_24)
-//            .build()
-//
-//        // Start the service in the foreground
-//        startForeground(1, notification)
-//
-//        subscribeToLocationUpdates()
-//
-//        return START_STICKY
-//    }
+
     fun unsubscribeToLocationUpdates() {
         // Unsubscribe to location changes.
         try {
