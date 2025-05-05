@@ -1,6 +1,7 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ContentValues
 import android.content.Context
@@ -23,6 +24,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -57,14 +59,12 @@ class AddeventFragment : Fragment() {
     private var _binding: FragmentAddeventBinding? = null
     private var photoUri: Uri? = null
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
+    private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
+
 
 
     val auth = FirebaseAuth.getInstance()
-        val database = Firebase.database(dotenv).reference
-
-
-
-
+    val database = Firebase.database(dotenv).reference
 
 
     private val binding
@@ -92,10 +92,36 @@ class AddeventFragment : Fragment() {
                 binding.imageEventPhoto.visibility = View.VISIBLE
             }
         }
+        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val selectedImageUri = result.data?.data
+                if (selectedImageUri != null) {
+                    binding.imageEventPhoto.setImageURI(selectedImageUri)
+                    binding.imageEventPhoto.visibility = View.VISIBLE
+                }
+            }
+        }
 
         binding.buttonOpenCamera.setOnClickListener {
-            launchCamera()
+            showImageSourceDialog()
         }
+    }
+
+    private fun launchImagePicker() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        imagePickerLauncher.launch(intent)
+    }
+
+    private fun showImageSourceDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Add Photo")
+            .setItems(arrayOf("Take Photo", "Choose from Gallery")) { _, which ->
+                when (which) {
+                    0 -> launchCamera()
+                    1 -> launchImagePicker()
+                }
+            }
+            .show()
     }
 
 
