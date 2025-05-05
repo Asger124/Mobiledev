@@ -28,12 +28,18 @@ import dk.itu.moapd.copenhagenbuzz.asjo.databinding.EventRowItemBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentTimelineBinding
 
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class EventAdapter(options: FirebaseListOptions<Event>,private val fm: FragmentManager,private val context: Context, private val isGuest:Boolean) :
     FirebaseListAdapter<Event>(options) {
 
     private lateinit var auth: FirebaseAuth
+
+    val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+
 
     companion object {
         const val TAG = "EventAdapter"
@@ -90,10 +96,10 @@ class EventAdapter(options: FirebaseListOptions<Event>,private val fm: FragmentM
             }
             if (uid != event.userId) {
                 editButton.visibility = View.GONE
-                infoButton.visibility = View.GONE
+                deleteButton.visibility = View.GONE
             } else {
                 editButton.visibility = View.VISIBLE
-                infoButton.visibility = View.VISIBLE
+                deleteButton.visibility = View.VISIBLE
             }
 
             editButton.setOnClickListener {
@@ -101,10 +107,13 @@ class EventAdapter(options: FirebaseListOptions<Event>,private val fm: FragmentM
                 dialog.show(fm, "UpdateDataDialog")
             }
 
+            val startdateFormat = dateFormat.format(Date(event.startDate!!))
+            val enddateFormat = dateFormat.format(Date(event.endDate!!))
+
             textViewName.text = event.eventName
             textViewType.text = event.eventType
             textViewLocation.text = event.eventLocation?.address ?: ""
-            textViewDate.text = "${event.startDate} - ${event.endDate}"
+            textViewDate.text = "${startdateFormat} - ${enddateFormat}"
             textViewDescription.text = event.eventDescription
             imageViewPhoto.setImageResource(R.drawable.ic_launcher_background) // Placeholder
 
@@ -113,7 +122,7 @@ class EventAdapter(options: FirebaseListOptions<Event>,private val fm: FragmentM
                 .getReference("events")
                 .child(eventKey)
 
-            infoButton.setOnClickListener {
+            deleteButton.setOnClickListener {
                 deleteRef.get().addOnSuccessListener {
                     deleteRef.removeValue()
                    // Delete event from all users favorite list

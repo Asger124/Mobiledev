@@ -16,7 +16,7 @@
     <string name="Favorite_button">Like</string>
     <string name="Photo_view">Photo</string>
     <string name="event_row_edit">Edit</string>
-    <string name="event_row_info">Info</string>
+    <string name="event_row_info">Delete</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="preference_file_key">dk.itu.moapd.copenhagenbuzz.asjo.PREFERENCE_FILE_KEY</string>
 

@@ -161,7 +161,7 @@ class AddeventFragment : Fragment() {
 //    }
 
     private fun showMessage(event:Event) {
-        val msg = ("Event added using\n$event")
+        val msg = ("Event added\n${event.eventName}")
         Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
         Log.d("Event:", event.toString())
 

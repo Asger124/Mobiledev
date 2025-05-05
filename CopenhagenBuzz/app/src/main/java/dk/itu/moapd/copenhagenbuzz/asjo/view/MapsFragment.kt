@@ -10,6 +10,7 @@ import android.content.ServiceConnection
 import android.content.SharedPreferences
 
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -48,6 +49,9 @@ import java.util.Date
 import java.util.Locale
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
+
+    val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+
 
     private inner class LocationBroadcastReceiver : BroadcastReceiver() {
 
@@ -172,7 +176,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
             googleMap = map
 
-            googleMap.setPadding(0, 100, 0, 0)
+            googleMap.setPadding(0, 100, 0, 50)
 
             // Store a reference from Marker to Event
             val markerEventMap = mutableMapOf<Marker, Event>()
@@ -209,8 +213,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     val message = buildString {
                         appendLine("Type: ${it.eventType}")
                         appendLine("Description: ${it.eventDescription}")
-                        appendLine("Start: ${it.startDate}")
-                        appendLine("End: ${it.endDate}")
+                        appendLine("Start: ${dateFormat.format(Date(it.startDate!!))}")
+                        appendLine("End: ${dateFormat.format(Date (it.endDate!!))}")
                         appendLine("Location: ${it.eventLocation?.address}")
                     }
 
@@ -281,22 +285,26 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     private fun updateLocationDetails(location: Location) {
 
-        if(checkPermission()) {
-                    val user = LatLng(location.latitude, location.longitude)
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(user))
-                    // 2) Show lat/lng in your overlay
-                    with(binding) {
-                        coordOverlay.text = String.format(
-                            Locale.getDefault(),
-                            "Lat: %.6f\nLng: %.6f",
-                            location.latitude,
-                            location.longitude
-                        )
-            }
-        }else {
-            requestUserPermissions()
-        }
+        if (checkPermission()) {
+            val user = LatLng(location.latitude, location.longitude)
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(user))
+            val geocoder = Geocoder(requireContext(), Locale.getDefault())
+            val addressList = geocoder.getFromLocation(location.latitude, location.longitude, 1)
 
+            val addressText = if (!addressList.isNullOrEmpty()) {
+                val address = addressList[0]
+                // You can customize the format as needed
+                "${address.getAddressLine(0)}"
+
+            } else {
+                requestUserPermissions()
+            }
+            with(binding) {
+                coordOverlay.text = "Your last known location:\n" + addressText.toString()
+            }
+
+
+        }
     }
 
 
