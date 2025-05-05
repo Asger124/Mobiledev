@@ -1,10 +1,17 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
 
+import android.app.Activity
 import android.app.DatePickerDialog
+import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
 import android.icu.util.Calendar
 import android.location.Address
 import android.location.Geocoder
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +19,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -46,9 +55,15 @@ class AddeventFragment : Fragment() {
     private var selectedEndDate: LocalDate? = null
     val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private var _binding: FragmentAddeventBinding? = null
+    private var photoUri: Uri? = null
+    private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
 
-        val auth = FirebaseAuth.getInstance()
+
+    val auth = FirebaseAuth.getInstance()
         val database = Firebase.database(dotenv).reference
+
+
+
 
 
 
@@ -67,6 +82,40 @@ class AddeventFragment : Fragment() {
 
         setUpEventAttr()
     }.root
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK && photoUri != null) {
+                binding.imageEventPhoto.setImageURI(photoUri)
+                binding.imageEventPhoto.visibility = View.VISIBLE
+            }
+        }
+
+        binding.buttonOpenCamera.setOnClickListener {
+            launchCamera()
+        }
+    }
+
+
+    private fun launchCamera() {
+        val resolver = requireContext().contentResolver
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "event_${System.currentTimeMillis()}.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+        }
+
+        photoUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+            putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+        }
+
+        cameraLauncher.launch(intent)
+    }
+
 
 
 

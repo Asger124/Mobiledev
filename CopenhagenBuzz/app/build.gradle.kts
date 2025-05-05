@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.navigation.ui.ktx)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.storage.ktx)
     implementation(libs.firebase.ui.auth)
     implementation(libs.firebase.ui.database)
     implementation(libs.dotenv.kotlin)
