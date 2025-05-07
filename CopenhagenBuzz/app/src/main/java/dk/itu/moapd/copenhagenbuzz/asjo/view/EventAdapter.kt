@@ -23,6 +23,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import com.squareup.picasso.Picasso
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.EventRowItemBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentTimelineBinding
@@ -113,35 +116,46 @@ class EventAdapter(options: FirebaseListOptions<Event>,private val fm: FragmentM
             textViewName.text = event.eventName
             textViewType.text = event.eventType
             textViewLocation.text = event.eventLocation?.address ?: ""
-            textViewDate.text = "${startdateFormat} - ${enddateFormat}"
-            textViewDescription.text = event.eventDescription
-            imageViewPhoto.setImageResource(R.drawable.ic_launcher_background) // Placeholder
-
-
-            val deleteRef = FirebaseDatabase.getInstance(dotenv)
-                .getReference("events")
-                .child(eventKey)
-
-            deleteButton.setOnClickListener {
-                deleteRef.get().addOnSuccessListener {
-                    deleteRef.removeValue()
-                   // Delete event from all users favorite list
-                    allFavRef.get().addOnSuccessListener { favSnapshot ->
-                        for (userSnapshot in favSnapshot.children) {
-                            val userId = userSnapshot.key
-                            if (userSnapshot.hasChild(eventKey)) {
-                                allFavRef.child(userId!!).child(eventKey).removeValue()
-                            }
-                        }
-                        Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show()
+            event.eventPhotoURL?.let { photoUrl ->
+                // Get the reference to the image in Firebase Storage
+                        // Load the image into the ImageView using Picasso
+                        Picasso.get()
+                            .load(photoUrl)
+                            .placeholder(R.drawable.ic_launcher_background)
+                            .error(R.drawable.outline_no_accounts_24)
+                            .into(binding.imageViewPhoto)
                     }
-                    deleteRef.get().addOnFailureListener {
-                        Toast.makeText(context, "Failed to delete", Toast.LENGTH_LONG).show()
+                textViewDate.text = "${startdateFormat} - ${enddateFormat}"
+                textViewDescription.text = event.eventDescription
+                imageViewPhoto.setImageResource(R.drawable.ic_launcher_background) // Placeholder
+
+
+                val deleteRef = FirebaseDatabase.getInstance(dotenv)
+                    .getReference("events")
+                    .child(eventKey)
+
+                deleteButton.setOnClickListener {
+                    deleteRef.get().addOnSuccessListener {
+                        deleteRef.removeValue()
+                        // Delete event from all users favorite list
+                        allFavRef.get().addOnSuccessListener { favSnapshot ->
+                            for (userSnapshot in favSnapshot.children) {
+                                val userId = userSnapshot.key
+                                if (userSnapshot.hasChild(eventKey)) {
+                                    allFavRef.child(userId!!).child(eventKey).removeValue()
+                                }
+                            }
+                            Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show()
+                        }
+                        deleteRef.get().addOnFailureListener {
+                            Toast.makeText(context, "Failed to delete", Toast.LENGTH_LONG).show()
+                        }
                     }
                 }
             }
         }
-    }}
+    }
+
 
 
 

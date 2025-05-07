@@ -11,6 +11,7 @@ data class Event(
     var endDate : Long? = null,
     var eventType: String? = null,
     var eventDescription: String? = null,
+    var eventPhotoURL: String? = null,
     @get:PropertyName("isFavorite")
     @set:PropertyName("isFavorite")
     var isFavorite: Boolean = false

@@ -8,6 +8,7 @@ plugins {
 }
 
 
+
 android {
     namespace = "dk.itu.moapd.copenhagenbuzz.asjo"
     compileSdk = 35
@@ -40,6 +41,10 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
 }
 
@@ -65,5 +70,11 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.picasso)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.ui.tooling.preview)
+    // Needed for ComposeView
+    implementation(libs.androidx.activity.compose)
 
 }

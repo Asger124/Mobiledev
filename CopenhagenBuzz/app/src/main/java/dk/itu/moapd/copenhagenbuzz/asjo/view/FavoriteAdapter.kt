@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.squareup.picasso.Picasso
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FavoriteRowItemBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 import dk.itu.moapd.copenhagenbuzz.asjo.R
@@ -23,7 +24,16 @@ class FavoriteAdapter(options: FirebaseRecyclerOptions<Event>) : FirebaseRecycle
         fun bind(favorite: Event) {
             with(binding) {
                 // Fill out the Material Design card.
-                    imageViewPhoto.setImageResource(R.drawable.ic_launcher_background)
+                favorite.eventPhotoURL?.let { photoUrl ->
+                    // Get the reference to the image in Firebase Storage
+                    // Load the image into the ImageView using Picasso
+                    Picasso.get()
+                        .load(photoUrl)
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .error(R.drawable.outline_no_accounts_24)
+                        .into(binding.imageViewPhoto)
+                }
+
                     textViewName.text = favorite.eventName
                     textViewSubtitle.text = favorite.eventType
             }
