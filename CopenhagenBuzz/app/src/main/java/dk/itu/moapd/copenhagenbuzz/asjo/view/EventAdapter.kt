@@ -121,6 +121,7 @@ class EventAdapter(options: FirebaseListOptions<Event>,private val fm: FragmentM
                         // Load the image into the ImageView using Picasso
                         Picasso.get()
                             .load(photoUrl)
+                            .rotate(90F)  //To offset Picasso rotating images from URL
                             .placeholder(R.drawable.ic_launcher_background)
                             .error(R.drawable.outline_no_accounts_24)
                             .into(binding.imageViewPhoto)

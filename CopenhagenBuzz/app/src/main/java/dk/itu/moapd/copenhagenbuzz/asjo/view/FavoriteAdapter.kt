@@ -29,6 +29,7 @@ class FavoriteAdapter(options: FirebaseRecyclerOptions<Event>) : FirebaseRecycle
                     // Load the image into the ImageView using Picasso
                     Picasso.get()
                         .load(photoUrl)
+                        .rotate(90F)
                         .placeholder(R.drawable.ic_launcher_background)
                         .error(R.drawable.outline_no_accounts_24)
                         .into(binding.imageViewPhoto)

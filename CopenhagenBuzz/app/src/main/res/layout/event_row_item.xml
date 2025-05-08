@@ -70,7 +70,7 @@
                 android:layout_height="194dp"
                 android:background="?colorSurfaceContainerLowest"
                 android:contentDescription="@string/Photo_view"
-                android:scaleType="centerCrop"
+                android:scaleType="fitCenter"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_view_type" />
@@ -123,6 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="10dp"
                 android:text="@string/event_row_edit"
                 tools:ignore="ButtonStyle"
                 app:layout_constraintStart_toStartOf="parent"

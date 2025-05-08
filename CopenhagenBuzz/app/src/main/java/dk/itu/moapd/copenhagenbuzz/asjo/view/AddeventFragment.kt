@@ -261,6 +261,7 @@ class AddeventFragment : Fragment() {
                                     .setValue(newEvent)
                                     .addOnCompleteListener {
                                         uploadingDialog.dismiss()
+                                        showMessage(binding.root,newEvent)
                                     }
                             }
                         }
