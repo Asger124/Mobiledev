@@ -3,15 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:paddingBottom="40dp">
+    android:layout_width="match_parent">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_field_event_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="16dp"
         android:hint="@string/event_name"
         app:endIconMode="clear_text"
@@ -122,14 +121,14 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_text_event_description"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="120dp"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageView
         android:id="@+id/image_event_photo"
         android:layout_width="0dp"
-        android:layout_height="150dp"
+        android:layout_height="120dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"

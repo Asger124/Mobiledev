@@ -203,7 +203,6 @@ class UpdateDataDialogFragment(private val event: Event, private val position: I
                                 }
                             }.addOnCompleteListener {
                                 uploadingDialog.dismiss()
-                                showMessage(binding.root,updatedEvent)
                                 dismiss()
                             }
                         }

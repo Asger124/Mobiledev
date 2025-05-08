@@ -52,6 +52,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
+    private var isCameraInitialized = false
+
 
     private inner class LocationBroadcastReceiver : BroadcastReceiver() {
 
@@ -302,7 +304,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             with(binding) {
                 coordOverlay.text = "Your last known location:\n" + addressText.toString()
             }
-
 
         }
     }
