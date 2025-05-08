@@ -1,21 +1,13 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
-
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListView
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import dk.itu.moapd.copenhagenbuzz.asjo.R
-import dk.itu.moapd.copenhagenbuzz.asjo.databinding.EventRowItemBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentFavoritesBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 
@@ -49,7 +41,7 @@ class FavoritesFragment : Fragment() {
 
         val options = FirebaseRecyclerOptions.Builder<Event>()
             .setQuery(query, Event::class.java)
-            .setLifecycleOwner(viewLifecycleOwner)   // auto start/stop
+            .setLifecycleOwner(viewLifecycleOwner)
             .build()
 
         adapter = FavoriteAdapter(options)

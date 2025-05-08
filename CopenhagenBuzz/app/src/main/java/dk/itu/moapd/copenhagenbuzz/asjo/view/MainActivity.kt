@@ -35,7 +35,6 @@ import androidx.core.view.WindowCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.ActivityMainBinding
@@ -80,7 +79,6 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        //binding.bottomNavigation.setupWithNavController(navController)
 
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             val isGuest = FirebaseAuth.getInstance().currentUser?.isAnonymous == true
@@ -137,6 +135,12 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    /**
+     * Handles menu item selections.
+     * @param item The selected menu item.
+     * @return Boolean indicating whether the event was handled.
+     */
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         // Handle top app bar menu item clicks.
         R.id.account -> {
@@ -174,14 +178,6 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
-
-
-    /**
-     * Handles menu item selections.
-     * @param item The selected menu item.
-     * @return Boolean indicating whether the event was handled.
-     */
-
 
     /**
      * Sets up a menu listener for item clicks in the menu.

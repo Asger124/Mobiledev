@@ -1,27 +1,18 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
-
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
-import android.widget.TextView
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.database.FirebaseListOptions
-import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentTimelineBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
-import io.github.cdimascio.dotenv.Dotenv
-import io.github.cdimascio.dotenv.dotenv
+
 
 
 class TimelineFragment : Fragment(R.layout.fragment_timeline) {
@@ -40,10 +31,6 @@ class TimelineFragment : Fragment(R.layout.fragment_timeline) {
     }.root
 
 
-    private val binding
-        get() = requireNotNull(_binding){
-            "Cannot access this"
-        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,12 +56,6 @@ class TimelineFragment : Fragment(R.layout.fragment_timeline) {
             //listView.adapter = adapter
 
     }
-//
-//    private fun showEditDialog(event: Event) {
-//        // Show your dialog here
-//        val dialogFragment = UpdateDataDialogFragment()
-//        dialogFragment.show(parentFragmentManager, "editEventDialog")
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

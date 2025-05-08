@@ -1,29 +1,22 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
 
 import android.app.DatePickerDialog
-import android.app.Dialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.icu.util.Calendar
-import android.location.Geocoder
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.EditText
-import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.window.Dialog
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -32,13 +25,9 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Locale
-private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
-private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
-private var photoUri: Uri? = null
+
 
 
 internal object SharedPreferenceUtil {
@@ -156,11 +145,6 @@ fun Fragment.showLoadingDialog(): AlertDialog {
     dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
     dialog.show()
     return dialog
-}
-
-
-fun removeDialog(dialog: View?) {
-    dialog?.parent?.let { (it as ViewGroup).removeView(dialog) }
 }
 
 

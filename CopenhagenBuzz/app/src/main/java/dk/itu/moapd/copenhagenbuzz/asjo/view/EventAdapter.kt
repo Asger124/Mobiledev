@@ -1,35 +1,20 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
-
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseListAdapter
 import com.firebase.ui.database.FirebaseListOptions
-import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.EventRowItemBinding
-import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentTimelineBinding
-
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -91,7 +76,6 @@ class EventAdapter(options: FirebaseListOptions<Event>,private val fm: FragmentM
                         userFavRef.removeValue()
                             .addOnCompleteListener { buttonFavorite.setIconResource(R.drawable.outline_favorite_border_24) }
                     } else {
-                        // favorite: copy the Event object into /favorites/$uid/$eventKey
                         userFavRef.setValue(event)
                             .addOnCompleteListener { buttonFavorite.setIconResource(R.drawable.baseline_favorite_24) }
                     }

@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.SharedPreferences
-
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -23,7 +22,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -38,7 +36,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -99,14 +96,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             }
         } else {
             // Permission denied
-            Toast.makeText(
-                requireContext(),
-                "Location permission is required for location features",
-                Toast.LENGTH_LONG
-            ).show()
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Permission Required")
+                .setMessage("Location permission is needed to use location features. You can enable it in the app's settings on your device.")
+                .setPositiveButton("OK", null)
+                .show()
         }
     }
-
 
     private lateinit var googleMap: GoogleMap
 
@@ -117,9 +113,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             "Cannot access this"
         }
 
-    companion object {
-        private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
-    }
 
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -253,8 +246,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             locationBroadcastReceiver,
             IntentFilter(LocationService.ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST))
 
-        // Register the shared preference change listener.
-
     }
 
 
@@ -286,8 +277,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
 
-
-
     private fun updateLocationDetails(location: Location) {
 
         if (checkPermission()) {
@@ -302,7 +291,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
             val addressText = if (!addressList.isNullOrEmpty()) {
                 val address = addressList[0]
-                // You can customize the format as needed
                 "${address.getAddressLine(0)}"
 
             } else {
@@ -314,6 +302,5 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         }
     }
-
 
 }

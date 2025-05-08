@@ -9,10 +9,7 @@ import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
-import android.provider.CalendarContract.Events
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,10 +22,8 @@ import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentUpdateDialogBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 import dk.itu.moapd.copenhagenbuzz.asjo.model.EventLocation
-import dk.itu.moapd.copenhagenbuzz.asjo.view.AddeventFragment
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 private var selectedStartDate: LocalDate? = null
@@ -121,6 +116,7 @@ class UpdateDataDialogFragment(private val event: Event, private val position: I
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         super.onCreateDialog(savedInstanceState)
+        photoUri = null
         _binding = FragmentUpdateDialogBinding.inflate(layoutInflater)
 
         binding.buttonOpenCamera.setOnClickListener {
@@ -222,12 +218,11 @@ class UpdateDataDialogFragment(private val event: Event, private val position: I
                 Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
 
             }
-//old dismiss
         }
 
         return MaterialAlertDialogBuilder(requireContext())
             .setTitle("Update Event")
-            .setView(binding.root)  // << This is your inflated layout
+            .setView(binding.root)
             .create()
     }
 

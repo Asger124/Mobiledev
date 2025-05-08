@@ -31,23 +31,14 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
-import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentAddeventBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
 import dk.itu.moapd.copenhagenbuzz.asjo.model.EventLocation
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.io.IOException
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 
@@ -149,7 +140,6 @@ class AddeventFragment : Fragment() {
     }
 
     private fun cameraPermissionResult(isGranted: Boolean) {
-        // Use the takeIf function to conditionally execute code based on the permission result
         isGranted.takeIf { it }?.run {
             showImageSourceDialog()
         } ?: MaterialAlertDialogBuilder(requireContext())
@@ -160,42 +150,11 @@ class AddeventFragment : Fragment() {
 
 
     private fun launchCamera() {
-//        val resolver = requireContext().contentResolver
-//        val contentValues = ContentValues().apply {
-//            put(MediaStore.Images.Media.DISPLAY_NAME, "event_${System.currentTimeMillis()}.jpg")
-//            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-//            put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-//        }
-//
-//        photoUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-//
-//        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-//            putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-//        }
-//
-//        cameraLauncher.launch(intent)
 
         photoUri = ImageUtils.createImageUri(requireContext())
         val intent = ImageUtils.buildCameraIntent(photoUri!!)
         cameraLauncher.launch(intent)
     }
-
-//    private fun UploadImage(uri: Uri, onSuccess: (String) -> Unit) {
-//        val filename = "events/${System.currentTimeMillis()}.jpg"
-//        val storageRef = Firebase.storage.reference.child(filename)
-//
-//        storageRef.putFile(uri)
-//            .addOnSuccessListener {
-//                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-//                    onSuccess(downloadUri.toString())
-//                }
-//            }
-//            .addOnFailureListener {
-//                Log.e("Upload", "Upload failed", it)
-//            }
-//    }
-
-
 
     private fun setUpEventAttr() {
 

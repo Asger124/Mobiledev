@@ -1,8 +1,6 @@
 package dk.itu.moapd.copenhagenbuzz.asjo.view
-
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
@@ -10,11 +8,8 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 
-import dk.itu.moapd.copenhagenbuzz.asjo.databinding.ActivityLoginBinding
-
 class LoginActivity : AppCompatActivity() {
 
-   // private lateinit var binding : ActivityLoginBinding
 
     private val signInLauncher = registerForActivityResult(
         FirebaseAuthUIActivityResultContract()
@@ -78,30 +73,3 @@ class LoginActivity : AppCompatActivity() {
     }
 
 }
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        binding = ActivityLoginBinding.inflate(layoutInflater)
-//        setContentView(binding.root)
-//
-//        binding.loginButton.setOnClickListener{
-//            val intent = Intent(this,MainActivity::class.java).apply {
-//                putExtra("isLoggedIn",true)
-//            }
-//            Log.d("MenuDebug", "Login Button Clicked - Sending IsLoggedIn = true")
-//            startActivity(intent)
-//            finish()
-//        }
-//
-//        binding.guestButton.setOnClickListener{
-//            val intent = Intent(this,MainActivity::class.java).apply {
-//                putExtra("isLoggedIn", false)
-//            }
-//            Log.d("MenuDebug", "Guest Button Clicked - Sending IsLoggedIn = false")
-//            startActivity(intent)
-//            finish()
-//        }
-//
-//
-//    }
-//}
