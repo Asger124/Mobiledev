@@ -24,6 +24,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -44,6 +45,7 @@ import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.copenhagenbuzz.asjo.R
 import dk.itu.moapd.copenhagenbuzz.asjo.databinding.FragmentMapsBinding
 import dk.itu.moapd.copenhagenbuzz.asjo.model.Event
+import dk.itu.moapd.copenhagenbuzz.asjo.viewmodel.DataViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -52,14 +54,15 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
-    private var isCameraInitialized = false
+    private val viewModel: DataViewModel by viewModels()
+
 
 
     private inner class LocationBroadcastReceiver : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
             Log.d("MapsFragment", "BroadcastReceiver got an intent!")
-            Toast.makeText(context, "Loc update received", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Location update received", Toast.LENGTH_SHORT).show()
             val location = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                 intent.getParcelableExtra(LocationService.EXTRA_LOCATION, Location::class.java)
             else
@@ -289,7 +292,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         if (checkPermission()) {
             val user = LatLng(location.latitude, location.longitude)
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(user))
+            if (!viewModel.isCameraInitialized) {
+                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(user, 16f)
+                googleMap.moveCamera(cameraUpdate)
+                viewModel.isCameraInitialized = true
+            }
             val geocoder = Geocoder(requireContext(), Locale.getDefault())
             val addressList = geocoder.getFromLocation(location.latitude, location.longitude, 1)
 
